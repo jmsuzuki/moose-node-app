@@ -1,0 +1,18 @@
+{
+  "name": "my-moose-app",
+  "version": "0.0",
+  "scripts": {
+    "build": "moose-cli build --docker",
+    "moose": "moose-cli",
+    "dev": "moose-cli dev"
+  },
+  "dependencies": {
+    "ts-patch": "^3.3.0",
+    "@514labs/moose-lib": "latest",
+    "typia": "^7.6.0"
+  },
+  "devDependencies": {
+    "@514labs/moose-cli": "latest",
+    "@types/node": "^20.12.12"
+  }
+}
