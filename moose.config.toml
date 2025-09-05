@@ -41,3 +41,8 @@ config_path = "config/dynamicconfig/development-sql.yaml"
 postgresql_version = "13"
 
 [supported_old_versions]
+
+[features]
+streaming_engine = true
+workflows = true
+data_model_v2 = true
