@@ -26,7 +26,7 @@ export interface Bar {
 
 /** Raw data ingestion */
 export const FooPipeline = new IngestPipeline<Foo>("Foo", {
-  table: false, // No table; only stream raw records
+  table: true, // No table; only stream raw records
   stream: true, // Buffer ingested records
   ingest: true, // POST /ingest/Foo
 });
