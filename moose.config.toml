@@ -1,5 +1,10 @@
 language = "Typescript"
 
+[typescript_config]
+# Package manager to use for installing dependencies
+# Options: "npm" (default), "pnpm", "yarn"
+package_manager = "npm"
+
 [redpanda_config]
 broker = "localhost:19092"
 message_timeout_ms = 1000
@@ -14,6 +19,7 @@ use_ssl = false
 host = "localhost"
 host_port = 18123
 native_port = 9000
+# additional_databases = ["analytics", "staging"]  # Optional: Additional databases to create on startup
 
 [http_server_config]
 host = "localhost"
@@ -32,6 +38,8 @@ db_user = "temporal"
 db_password = "temporal"
 db_port = 5432
 temporal_port = 7233
+# Uncomment and set to "http" or "https" to force a specific scheme
+# temporal_scheme = "https"
 temporal_version = "1.22.3"
 admin_tools_version = "1.22.3"
 ui_version = "2.21.3"
@@ -46,3 +54,4 @@ postgresql_version = "13"
 streaming_engine = true
 workflows = true
 data_model_v2 = true
+apis = true
