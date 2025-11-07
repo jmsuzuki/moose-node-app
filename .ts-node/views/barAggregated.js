@@ -22,41 +22,37 @@ exports.BarAggregatedMV = new moose_lib_1.MaterializedView({
 }, {
     version: "3.1",
     components: {
-        schemas: {
-            BarAggregated: {
-                type: "object",
-                properties: {
-                    dayOfMonth: {
-                        type: "integer"
-                    },
-                    totalRows: {
-                        type: "integer"
-                    },
-                    rowsWithText: {
-                        type: "integer"
-                    },
-                    totalTextLength: {
-                        type: "integer"
-                    },
-                    maxTextLength: {
-                        type: "integer"
-                    }
-                },
-                required: [
-                    "dayOfMonth",
-                    "totalRows",
-                    "rowsWithText",
-                    "totalTextLength",
-                    "maxTextLength"
-                ]
-            }
-        }
+        schemas: {}
     },
     schemas: [
         {
-            $ref: "#/components/schemas/BarAggregated"
+            type: "object",
+            properties: {
+                dayOfMonth: {
+                    type: "integer"
+                },
+                totalRows: {
+                    type: "integer"
+                },
+                rowsWithText: {
+                    type: "integer"
+                },
+                totalTextLength: {
+                    type: "integer"
+                },
+                maxTextLength: {
+                    type: "integer"
+                }
+            },
+            required: [
+                "dayOfMonth",
+                "totalRows",
+                "rowsWithText",
+                "totalTextLength",
+                "maxTextLength"
+            ]
         }
     ]
-}, JSON.parse("[{\"name\":\"dayOfMonth\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"totalRows\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"rowsWithText\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"totalTextLength\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"maxTextLength\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]}]"));
+}, JSON.parse("[{\"name\":\"dayOfMonth\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"totalRows\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"rowsWithText\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"totalTextLength\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"maxTextLength\",\"data_type\":\"Int64\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]}]"));
 var templateObject_1;
 //# sourceMappingURL=barAggregated.js.map

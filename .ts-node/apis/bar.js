@@ -76,7 +76,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BarApi = void 0;
+exports.BarApiV1 = exports.BarApi = void 0;
 var __typia_transform__isTypeInt32 = __importStar(require("typia/lib/internal/_isTypeInt32.js"));
 var __typia_transform__assertGuard = __importStar(require("typia/lib/internal/_assertGuard.js"));
 var __typia_transform__httpQueryParseURLSearchParams = __importStar(require("typia/lib/internal/_httpQueryParseURLSearchParams.js"));
@@ -85,7 +85,7 @@ var __typia_transform__httpQueryReadNumber = __importStar(require("typia/lib/int
 var typia_1 = __importDefault(require("typia"));
 var moose_lib_1 = require("@514labs/moose-lib");
 var barAggregated_1 = require("../views/barAggregated");
-exports.BarApi = new moose_lib_1.Api("barApi", function (params, utils) {
+exports.BarApi = new moose_lib_1.Api("bar", function (params, utils) {
     var assertGuard = (function () { var _io0 = function (input) { return (undefined === input.orderBy || "totalRows" === input.orderBy || "rowsWithText" === input.orderBy || "maxTextLength" === input.orderBy || "totalTextLength" === input.orderBy) && (undefined === input.limit || "number" === typeof input.limit) && (undefined === input.startDay || "number" === typeof input.startDay && __typia_transform__isTypeInt32._isTypeInt32(input.startDay)) && (undefined === input.endDay || "number" === typeof input.endDay && __typia_transform__isTypeInt32._isTypeInt32(input.endDay)); }; var _ao0 = function (input, _path, _exceptionable) {
         if (_exceptionable === void 0) { _exceptionable = true; }
         return (undefined === input.orderBy || "totalRows" === input.orderBy || "rowsWithText" === input.orderBy || "maxTextLength" === input.orderBy || "totalTextLength" === input.orderBy || __typia_transform__assertGuard._assertGuard(_exceptionable, {
@@ -152,18 +152,32 @@ exports.BarApi = new moose_lib_1.Api("barApi", function (params, utils) {
     var searchParams = new URLSearchParams(params);
     var processedParams = assertGuard(searchParams);
     return (function (_a, _b) { return __awaiter(void 0, [_a, _b], void 0, function (_c, _d) {
-        var query, data;
+        var cache, cacheKey, cachedData, query, data, result;
         var _e = _c.orderBy, orderBy = _e === void 0 ? "totalRows" : _e, _f = _c.limit, limit = _f === void 0 ? 5 : _f, _g = _c.startDay, startDay = _g === void 0 ? 1 : _g, _h = _c.endDay, endDay = _h === void 0 ? 31 : _h;
         var client = _d.client, sql = _d.sql;
         return __generator(this, function (_j) {
             switch (_j.label) {
-                case 0:
+                case 0: return [4 /*yield*/, moose_lib_1.MooseCache.get()];
+                case 1:
+                    cache = _j.sent();
+                    cacheKey = "bar:".concat(orderBy, ":").concat(limit, ":").concat(startDay, ":").concat(endDay);
+                    return [4 /*yield*/, cache.get(cacheKey)];
+                case 2:
+                    cachedData = _j.sent();
+                    if (cachedData && Array.isArray(cachedData) && cachedData.length > 0) {
+                        return [2 /*return*/, cachedData];
+                    }
                     query = sql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n        SELECT \n          ", ",\n          ", "\n        FROM ", "\n        WHERE \n          dayOfMonth >= ", " \n          AND dayOfMonth <= ", "\n        ORDER BY ", " DESC\n        LIMIT ", "\n      "], ["\n        SELECT \n          ", ",\n          ", "\n        FROM ", "\n        WHERE \n          dayOfMonth >= ", " \n          AND dayOfMonth <= ", "\n        ORDER BY ", " DESC\n        LIMIT ", "\n      "])), barAggregated_1.BarAggregatedMV.targetTable.columns.dayOfMonth, barAggregated_1.BarAggregatedMV.targetTable.columns[orderBy], barAggregated_1.BarAggregatedMV.targetTable, startDay, endDay, barAggregated_1.BarAggregatedMV.targetTable.columns[orderBy], limit);
                     return [4 /*yield*/, client.query.execute(query)];
-                case 1:
+                case 3:
                     data = _j.sent();
                     return [4 /*yield*/, data.json()];
-                case 2: return [2 /*return*/, _j.sent()];
+                case 4:
+                    result = _j.sent();
+                    return [4 /*yield*/, cache.set(cacheKey, result, 3600)];
+                case 5:
+                    _j.sent(); // Cache for 1 hour
+                    return [2 /*return*/, result];
             }
         });
     }); })(processedParams, utils);
@@ -209,7 +223,7 @@ exports.BarApi = new moose_lib_1.Api("barApi", function (params, utils) {
             $ref: "#/components/schemas/QueryParams"
         }
     ]
-}, JSON.parse("[{\"name\":\"orderBy\",\"data_type\":\"String\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"limit\",\"data_type\":\"Float\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"startDay\",\"data_type\":\"Int32\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"endDay\",\"data_type\":\"Int32\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"annotations\":[]}]"), {
+}, JSON.parse("[{\"name\":\"orderBy\",\"data_type\":\"String\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[[\"LowCardinality\",true]]},{\"name\":\"limit\",\"data_type\":\"Float\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"startDay\",\"data_type\":\"Int32\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"endDay\",\"data_type\":\"Int32\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]}]"), {
     version: "3.1",
     components: {
         schemas: {
@@ -247,5 +261,234 @@ exports.BarApi = new moose_lib_1.Api("barApi", function (params, utils) {
         }
     ]
 });
-var templateObject_1;
+exports.BarApiV1 = new moose_lib_1.Api("bar", function (params, utils) {
+    var assertGuard = (function () { var _io0 = function (input) { return (undefined === input.orderBy || "totalRows" === input.orderBy || "rowsWithText" === input.orderBy || "maxTextLength" === input.orderBy || "totalTextLength" === input.orderBy) && (undefined === input.limit || "number" === typeof input.limit) && (undefined === input.startDay || "number" === typeof input.startDay && __typia_transform__isTypeInt32._isTypeInt32(input.startDay)) && (undefined === input.endDay || "number" === typeof input.endDay && __typia_transform__isTypeInt32._isTypeInt32(input.endDay)); }; var _ao0 = function (input, _path, _exceptionable) {
+        if (_exceptionable === void 0) { _exceptionable = true; }
+        return (undefined === input.orderBy || "totalRows" === input.orderBy || "rowsWithText" === input.orderBy || "maxTextLength" === input.orderBy || "totalTextLength" === input.orderBy || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.http.createAssertQuery",
+            path: _path + ".orderBy",
+            expected: "(\"maxTextLength\" | \"rowsWithText\" | \"totalRows\" | \"totalTextLength\" | undefined)",
+            value: input.orderBy
+        }, _errorFactory)) && (undefined === input.limit || "number" === typeof input.limit || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.http.createAssertQuery",
+            path: _path + ".limit",
+            expected: "(number | undefined)",
+            value: input.limit
+        }, _errorFactory)) && (undefined === input.startDay || "number" === typeof input.startDay && (__typia_transform__isTypeInt32._isTypeInt32(input.startDay) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.http.createAssertQuery",
+            path: _path + ".startDay",
+            expected: "number & Type<\"int32\">",
+            value: input.startDay
+        }, _errorFactory)) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.http.createAssertQuery",
+            path: _path + ".startDay",
+            expected: "((number & Type<\"int32\">) | undefined)",
+            value: input.startDay
+        }, _errorFactory)) && (undefined === input.endDay || "number" === typeof input.endDay && (__typia_transform__isTypeInt32._isTypeInt32(input.endDay) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.http.createAssertQuery",
+            path: _path + ".endDay",
+            expected: "number & Type<\"int32\">",
+            value: input.endDay
+        }, _errorFactory)) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.http.createAssertQuery",
+            path: _path + ".endDay",
+            expected: "((number & Type<\"int32\">) | undefined)",
+            value: input.endDay
+        }, _errorFactory));
+    }; var __is = function (input) { return "object" === typeof input && null !== input && false === Array.isArray(input) && _io0(input); }; var _errorFactory; var __assert = function (input, errorFactory) {
+        if (false === __is(input)) {
+            _errorFactory = errorFactory;
+            (function (input, _path, _exceptionable) {
+                if (_exceptionable === void 0) { _exceptionable = true; }
+                return ("object" === typeof input && null !== input && false === Array.isArray(input) || __typia_transform__assertGuard._assertGuard(true, {
+                    method: "____moose____typia.http.createAssertQuery",
+                    path: _path + "",
+                    expected: "QueryParams",
+                    value: input
+                }, _errorFactory)) && _ao0(input, _path + "", true) || __typia_transform__assertGuard._assertGuard(true, {
+                    method: "____moose____typia.http.createAssertQuery",
+                    path: _path + "",
+                    expected: "QueryParams",
+                    value: input
+                }, _errorFactory);
+            })(input, "$input", true);
+        }
+        return input;
+    }; var __decode = function (input) {
+        var _a, _b, _c, _d;
+        input = __typia_transform__httpQueryParseURLSearchParams._httpQueryParseURLSearchParams(input);
+        var output = {
+            orderBy: (_a = __typia_transform__httpQueryReadString._httpQueryReadString(input.get("orderBy"))) !== null && _a !== void 0 ? _a : undefined,
+            limit: (_b = __typia_transform__httpQueryReadNumber._httpQueryReadNumber(input.get("limit"))) !== null && _b !== void 0 ? _b : undefined,
+            startDay: (_c = __typia_transform__httpQueryReadNumber._httpQueryReadNumber(input.get("startDay"))) !== null && _c !== void 0 ? _c : undefined,
+            endDay: (_d = __typia_transform__httpQueryReadNumber._httpQueryReadNumber(input.get("endDay"))) !== null && _d !== void 0 ? _d : undefined
+        };
+        return output;
+    }; return function (input, errorFactory) { return __assert(__decode(input), errorFactory); }; })();
+    var searchParams = new URLSearchParams(params);
+    var processedParams = assertGuard(searchParams);
+    return (function (_a, _b) { return __awaiter(void 0, [_a, _b], void 0, function (_c, _d) {
+        var cache, cacheKey, cachedData, query, data, result;
+        var _e = _c.orderBy, orderBy = _e === void 0 ? "totalRows" : _e, _f = _c.limit, limit = _f === void 0 ? 5 : _f, _g = _c.startDay, startDay = _g === void 0 ? 1 : _g, _h = _c.endDay, endDay = _h === void 0 ? 31 : _h;
+        var client = _d.client, sql = _d.sql;
+        return __generator(this, function (_j) {
+            switch (_j.label) {
+                case 0: return [4 /*yield*/, moose_lib_1.MooseCache.get()];
+                case 1:
+                    cache = _j.sent();
+                    cacheKey = "bar:v1:".concat(orderBy, ":").concat(limit, ":").concat(startDay, ":").concat(endDay);
+                    return [4 /*yield*/, cache.get(cacheKey)];
+                case 2:
+                    cachedData = _j.sent();
+                    if (cachedData && Array.isArray(cachedData) && cachedData.length > 0) {
+                        return [2 /*return*/, cachedData];
+                    }
+                    query = sql(templateObject_2 || (templateObject_2 = __makeTemplateObject(["\n        SELECT \n          ", ",\n          ", "\n        FROM ", "\n        WHERE \n          dayOfMonth >= ", " \n          AND dayOfMonth <= ", "\n        ORDER BY ", " DESC\n        LIMIT ", "\n      "], ["\n        SELECT \n          ", ",\n          ", "\n        FROM ", "\n        WHERE \n          dayOfMonth >= ", " \n          AND dayOfMonth <= ", "\n        ORDER BY ", " DESC\n        LIMIT ", "\n      "])), barAggregated_1.BarAggregatedMV.targetTable.columns.dayOfMonth, barAggregated_1.BarAggregatedMV.targetTable.columns[orderBy], barAggregated_1.BarAggregatedMV.targetTable, startDay, endDay, barAggregated_1.BarAggregatedMV.targetTable.columns[orderBy], limit);
+                    return [4 /*yield*/, client.query.execute(query)];
+                case 3:
+                    data = _j.sent();
+                    return [4 /*yield*/, data.json()];
+                case 4:
+                    result = _j.sent();
+                    // V1 specific: Add metadata
+                    result.forEach(function (item) {
+                        item.metadata = {
+                            version: "1.0",
+                            queryParams: { orderBy: orderBy, limit: limit, startDay: startDay, endDay: endDay },
+                        };
+                    });
+                    return [4 /*yield*/, cache.set(cacheKey, result, 3600)];
+                case 5:
+                    _j.sent(); // Cache for 1 hour
+                    return [2 /*return*/, result];
+            }
+        });
+    }); })(processedParams, utils);
+}, { version: "1" }, {
+    version: "3.1",
+    components: {
+        schemas: {
+            QueryParams: {
+                type: "object",
+                properties: {
+                    orderBy: {
+                        oneOf: [
+                            {
+                                "const": "totalRows"
+                            },
+                            {
+                                "const": "rowsWithText"
+                            },
+                            {
+                                "const": "maxTextLength"
+                            },
+                            {
+                                "const": "totalTextLength"
+                            }
+                        ]
+                    },
+                    limit: {
+                        type: "number"
+                    },
+                    startDay: {
+                        type: "integer"
+                    },
+                    endDay: {
+                        type: "integer"
+                    }
+                },
+                required: []
+            }
+        }
+    },
+    schemas: [
+        {
+            $ref: "#/components/schemas/QueryParams"
+        }
+    ]
+}, JSON.parse("[{\"name\":\"orderBy\",\"data_type\":\"String\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[[\"LowCardinality\",true]]},{\"name\":\"limit\",\"data_type\":\"Float\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"startDay\",\"data_type\":\"Int32\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"endDay\",\"data_type\":\"Int32\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]}]"), {
+    version: "3.1",
+    components: {
+        schemas: {
+            ResponseDataV1: {
+                type: "object",
+                properties: {
+                    dayOfMonth: {
+                        type: "number"
+                    },
+                    totalRows: {
+                        type: "number"
+                    },
+                    rowsWithText: {
+                        type: "number"
+                    },
+                    maxTextLength: {
+                        type: "number"
+                    },
+                    totalTextLength: {
+                        type: "number"
+                    },
+                    metadata: {
+                        type: "object",
+                        properties: {
+                            version: {
+                                type: "string"
+                            },
+                            queryParams: {
+                                $ref: "#/components/schemas/QueryParams"
+                            }
+                        },
+                        required: [
+                            "version",
+                            "queryParams"
+                        ]
+                    }
+                },
+                required: [
+                    "dayOfMonth"
+                ]
+            },
+            QueryParams: {
+                type: "object",
+                properties: {
+                    orderBy: {
+                        oneOf: [
+                            {
+                                "const": "totalRows"
+                            },
+                            {
+                                "const": "rowsWithText"
+                            },
+                            {
+                                "const": "maxTextLength"
+                            },
+                            {
+                                "const": "totalTextLength"
+                            }
+                        ]
+                    },
+                    limit: {
+                        type: "number"
+                    },
+                    startDay: {
+                        type: "integer"
+                    },
+                    endDay: {
+                        type: "integer"
+                    }
+                },
+                required: []
+            }
+        }
+    },
+    schemas: [
+        {
+            type: "array",
+            items: {
+                $ref: "#/components/schemas/ResponseDataV1"
+            }
+        }
+    ]
+});
+var templateObject_1, templateObject_2;
 //# sourceMappingURL=bar.js.map

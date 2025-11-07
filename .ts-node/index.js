@@ -18,4 +18,5 @@ __exportStar(require("./ingest/models"), exports);
 __exportStar(require("./ingest/transforms"), exports);
 __exportStar(require("./apis/bar"), exports);
 __exportStar(require("./views/barAggregated"), exports);
+__exportStar(require("./workflows/generator"), exports);
 //# sourceMappingURL=index.js.map

@@ -36,19 +36,234 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BarPipeline = exports.FooPipeline = void 0;
+exports.BarPipeline = exports.FooPipeline = exports.deadLetterTable = void 0;
+var __typia_transform__accessExpressionAsString = __importStar(require("typia/lib/internal/_accessExpressionAsString.js"));
 var __typia_transform__validateReport = __importStar(require("typia/lib/internal/_validateReport.js"));
 var __typia_transform__createStandardSchema = __importStar(require("typia/lib/internal/_createStandardSchema.js"));
 var __typia_transform__assertGuard = __importStar(require("typia/lib/internal/_assertGuard.js"));
 var typia_1 = __importDefault(require("typia"));
 var moose_lib_1 = require("@514labs/moose-lib");
 /** =======Pipeline Configuration========= */
+exports.deadLetterTable = new moose_lib_1.OlapTable("FooDeadLetter", {
+    orderByFields: ["failedAt"],
+}, {
+    version: "3.1",
+    components: {
+        schemas: {
+            Recordstringany: {
+                type: "object",
+                properties: {},
+                required: [],
+                description: "Construct a type with a set of properties K of type T",
+                additionalProperties: {}
+            }
+        }
+    },
+    schemas: [
+        {
+            type: "object",
+            properties: {
+                originalRecord: {
+                    $ref: "#/components/schemas/Recordstringany",
+                    description: "The original record that failed processing"
+                },
+                errorMessage: {
+                    type: "string",
+                    description: "Human-readable error message describing the failure"
+                },
+                errorType: {
+                    type: "string",
+                    description: "Classification of the error type (e.g., \"ValidationError\", \"TransformError\")"
+                },
+                failedAt: {
+                    type: "string",
+                    description: "Timestamp when the failure occurred",
+                    format: "date-time"
+                },
+                source: {
+                    oneOf: [
+                        {
+                            "const": "api"
+                        },
+                        {
+                            "const": "transform"
+                        },
+                        {
+                            "const": "table"
+                        }
+                    ],
+                    description: "The source component where the failure occurred"
+                }
+            },
+            required: [
+                "originalRecord",
+                "errorMessage",
+                "errorType",
+                "failedAt",
+                "source"
+            ]
+        }
+    ]
+}, JSON.parse("[{\"name\":\"originalRecord\",\"data_type\":\"Json\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"errorMessage\",\"data_type\":\"String\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"errorType\",\"data_type\":\"String\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"failedAt\",\"data_type\":\"DateTime\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"source\",\"data_type\":\"String\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[[\"LowCardinality\",true]]}]"), {
+    validate: function (data) {
+        var result = (function () { var _io0 = function (input) { return "object" === typeof input.originalRecord && null !== input.originalRecord && false === Array.isArray(input.originalRecord) && _io1(input.originalRecord) && "string" === typeof input.errorMessage && "string" === typeof input.errorType && input.failedAt instanceof Date && ("api" === input.source || "transform" === input.source || "table" === input.source); }; var _io1 = function (input) { return Object.keys(input).every(function (key) {
+            var value = input[key];
+            if (undefined === value)
+                return true;
+            return true;
+        }); }; var _vo0 = function (input, _path, _exceptionable) {
+            if (_exceptionable === void 0) { _exceptionable = true; }
+            return [("object" === typeof input.originalRecord && null !== input.originalRecord && false === Array.isArray(input.originalRecord) || _report(_exceptionable, {
+                    path: _path + ".originalRecord",
+                    expected: "Record<string, any>",
+                    value: input.originalRecord
+                })) && _vo1(input.originalRecord, _path + ".originalRecord", true && _exceptionable) || _report(_exceptionable, {
+                    path: _path + ".originalRecord",
+                    expected: "Record<string, any>",
+                    value: input.originalRecord
+                }), "string" === typeof input.errorMessage || _report(_exceptionable, {
+                    path: _path + ".errorMessage",
+                    expected: "string",
+                    value: input.errorMessage
+                }), "string" === typeof input.errorType || _report(_exceptionable, {
+                    path: _path + ".errorType",
+                    expected: "string",
+                    value: input.errorType
+                }), input.failedAt instanceof Date || _report(_exceptionable, {
+                    path: _path + ".failedAt",
+                    expected: "Date",
+                    value: input.failedAt
+                }), "api" === input.source || "transform" === input.source || "table" === input.source || _report(_exceptionable, {
+                    path: _path + ".source",
+                    expected: "(\"api\" | \"table\" | \"transform\")",
+                    value: input.source
+                })].every(function (flag) { return flag; });
+        }; var _vo1 = function (input, _path, _exceptionable) {
+            if (_exceptionable === void 0) { _exceptionable = true; }
+            return [false === _exceptionable || Object.keys(input).map(function (key) {
+                    var value = input[key];
+                    if (undefined === value)
+                        return true;
+                    return true;
+                }).every(function (flag) { return flag; })].every(function (flag) { return flag; });
+        }; var __is = function (input) { return "object" === typeof input && null !== input && _io0(input); }; var errors; var _report; return __typia_transform__createStandardSchema._createStandardSchema(function (input) {
+            if (false === __is(input)) {
+                errors = [];
+                _report = __typia_transform__validateReport._validateReport(errors);
+                (function (input, _path, _exceptionable) {
+                    if (_exceptionable === void 0) { _exceptionable = true; }
+                    return ("object" === typeof input && null !== input || _report(true, {
+                        path: _path + "",
+                        expected: "__type",
+                        value: input
+                    })) && _vo0(input, _path + "", true) || _report(true, {
+                        path: _path + "",
+                        expected: "__type",
+                        value: input
+                    });
+                })(input, "$input", true);
+                var success = 0 === errors.length;
+                return success ? {
+                    success: success,
+                    data: input
+                } : {
+                    success: success,
+                    errors: errors,
+                    data: input
+                };
+            }
+            return {
+                success: true,
+                data: input
+            };
+        }); })()(data);
+        return {
+            success: result.success,
+            data: result.success ? result.data : undefined,
+            errors: result.success ? undefined : result.errors
+        };
+    },
+    assert: (function () { var _io0 = function (input) { return "object" === typeof input.originalRecord && null !== input.originalRecord && false === Array.isArray(input.originalRecord) && _io1(input.originalRecord) && "string" === typeof input.errorMessage && "string" === typeof input.errorType && input.failedAt instanceof Date && ("api" === input.source || "transform" === input.source || "table" === input.source); }; var _io1 = function (input) { return Object.keys(input).every(function (key) {
+        var value = input[key];
+        if (undefined === value)
+            return true;
+        return true;
+    }); }; var _ao0 = function (input, _path, _exceptionable) {
+        if (_exceptionable === void 0) { _exceptionable = true; }
+        return (("object" === typeof input.originalRecord && null !== input.originalRecord && false === Array.isArray(input.originalRecord) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.createAssert",
+            path: _path + ".originalRecord",
+            expected: "Record<string, any>",
+            value: input.originalRecord
+        }, _errorFactory)) && _ao1(input.originalRecord, _path + ".originalRecord", true && _exceptionable) || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.createAssert",
+            path: _path + ".originalRecord",
+            expected: "Record<string, any>",
+            value: input.originalRecord
+        }, _errorFactory)) && ("string" === typeof input.errorMessage || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.createAssert",
+            path: _path + ".errorMessage",
+            expected: "string",
+            value: input.errorMessage
+        }, _errorFactory)) && ("string" === typeof input.errorType || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.createAssert",
+            path: _path + ".errorType",
+            expected: "string",
+            value: input.errorType
+        }, _errorFactory)) && (input.failedAt instanceof Date || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.createAssert",
+            path: _path + ".failedAt",
+            expected: "Date",
+            value: input.failedAt
+        }, _errorFactory)) && ("api" === input.source || "transform" === input.source || "table" === input.source || __typia_transform__assertGuard._assertGuard(_exceptionable, {
+            method: "____moose____typia.createAssert",
+            path: _path + ".source",
+            expected: "(\"api\" | \"table\" | \"transform\")",
+            value: input.source
+        }, _errorFactory));
+    }; var _ao1 = function (input, _path, _exceptionable) {
+        if (_exceptionable === void 0) { _exceptionable = true; }
+        return false === _exceptionable || Object.keys(input).every(function (key) {
+            var value = input[key];
+            if (undefined === value)
+                return true;
+            return true;
+        });
+    }; var __is = function (input) { return "object" === typeof input && null !== input && _io0(input); }; var _errorFactory; return function (input, errorFactory) {
+        if (false === __is(input)) {
+            _errorFactory = errorFactory;
+            (function (input, _path, _exceptionable) {
+                if (_exceptionable === void 0) { _exceptionable = true; }
+                return ("object" === typeof input && null !== input || __typia_transform__assertGuard._assertGuard(true, {
+                    method: "____moose____typia.createAssert",
+                    path: _path + "",
+                    expected: "__type",
+                    value: input
+                }, _errorFactory)) && _ao0(input, _path + "", true) || __typia_transform__assertGuard._assertGuard(true, {
+                    method: "____moose____typia.createAssert",
+                    path: _path + "",
+                    expected: "__type",
+                    value: input
+                }, _errorFactory);
+            })(input, "$input", true);
+        }
+        return input;
+    }; })(),
+    is: (function () { var _io0 = function (input) { return "object" === typeof input.originalRecord && null !== input.originalRecord && false === Array.isArray(input.originalRecord) && _io1(input.originalRecord) && "string" === typeof input.errorMessage && "string" === typeof input.errorType && input.failedAt instanceof Date && ("api" === input.source || "transform" === input.source || "table" === input.source); }; var _io1 = function (input) { return Object.keys(input).every(function (key) {
+        var value = input[key];
+        if (undefined === value)
+            return true;
+        return true;
+    }); }; return function (input) { return "object" === typeof input && null !== input && _io0(input); }; })()
+});
 /** Raw data ingestion */
 exports.FooPipeline = new moose_lib_1.IngestPipeline("Foo", {
-    path: "pipelines/foo", // TODO: Enable when using npm release with path support
-    table: true, // No table; only stream raw records
+    table: false, // No table; only stream raw records
     stream: true, // Buffer ingested records
-    ingest: true, // POST /ingest/Foo
+    ingestApi: true, // POST /ingest/Foo
+    deadLetterQueue: {
+        destination: exports.deadLetterTable,
+    },
 }, {
     version: "3.1",
     components: {
@@ -79,7 +294,7 @@ exports.FooPipeline = new moose_lib_1.IngestPipeline("Foo", {
             $ref: "#/components/schemas/Foo"
         }
     ]
-}, JSON.parse("[{\"name\":\"primaryKey\",\"data_type\":\"String\",\"primary_key\":true,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"timestamp\",\"data_type\":\"Float\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"optionalText\",\"data_type\":\"String\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"annotations\":[]}]"), {
+}, JSON.parse("[{\"name\":\"primaryKey\",\"data_type\":\"String\",\"primary_key\":true,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"timestamp\",\"data_type\":\"Float\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"optionalText\",\"data_type\":\"String\",\"primary_key\":false,\"required\":false,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]}]"), {
     validate: function (data) {
         var result = (function () { var _io0 = function (input) { return "string" === typeof input.primaryKey && "number" === typeof input.timestamp && (undefined === input.optionalText || "string" === typeof input.optionalText); }; var _vo0 = function (input, _path, _exceptionable) {
             if (_exceptionable === void 0) { _exceptionable = true; }
@@ -175,47 +390,41 @@ exports.FooPipeline = new moose_lib_1.IngestPipeline("Foo", {
 });
 /** Buffering and storing processed records (@see transforms.ts for transformation logic) */
 exports.BarPipeline = new moose_lib_1.IngestPipeline("Bar", {
-    // path: "pipelines/bar", // TODO: Enable when using npm release with path support
     table: true, // Persist in ClickHouse table "Bar"
     stream: true, // Buffer processed records
-    ingest: false, // No direct ingestion, derived from Foo
+    ingestApi: false, // No API; only derive from processed Foo records
 }, {
     version: "3.1",
     components: {
-        schemas: {
-            Bar: {
-                type: "object",
-                properties: {
-                    primaryKey: {
-                        type: "string"
-                    },
-                    utcTimestamp: {
-                        type: "string",
-                        format: "date-time"
-                    },
-                    hasText: {
-                        type: "boolean"
-                    },
-                    textLength: {
-                        type: "number"
-                    }
-                },
-                required: [
-                    "primaryKey",
-                    "utcTimestamp",
-                    "hasText",
-                    "textLength"
-                ],
-                description: "Analyzed text metrics derived from Foo"
-            }
-        }
+        schemas: {}
     },
     schemas: [
         {
-            $ref: "#/components/schemas/Bar"
+            type: "object",
+            properties: {
+                primaryKey: {
+                    type: "string"
+                },
+                utcTimestamp: {
+                    type: "string",
+                    format: "date-time"
+                },
+                hasText: {
+                    type: "boolean"
+                },
+                textLength: {
+                    type: "number"
+                }
+            },
+            required: [
+                "primaryKey",
+                "utcTimestamp",
+                "hasText",
+                "textLength"
+            ]
         }
     ]
-}, JSON.parse("[{\"name\":\"primaryKey\",\"data_type\":\"String\",\"primary_key\":true,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"utcTimestamp\",\"data_type\":\"DateTime\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"hasText\",\"data_type\":\"Boolean\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]},{\"name\":\"textLength\",\"data_type\":\"Float\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"annotations\":[]}]"), {
+}, JSON.parse("[{\"name\":\"primaryKey\",\"data_type\":\"String\",\"primary_key\":true,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"utcTimestamp\",\"data_type\":\"DateTime\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"hasText\",\"data_type\":\"Boolean\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]},{\"name\":\"textLength\",\"data_type\":\"Float\",\"primary_key\":false,\"required\":true,\"unique\":false,\"default\":null,\"ttl\":null,\"annotations\":[]}]"), {
     validate: function (data) {
         var result = (function () { var _io0 = function (input) { return "string" === typeof input.primaryKey && input.utcTimestamp instanceof Date && "boolean" === typeof input.hasText && "number" === typeof input.textLength; }; var _vo0 = function (input, _path, _exceptionable) {
             if (_exceptionable === void 0) { _exceptionable = true; }
@@ -244,11 +453,11 @@ exports.BarPipeline = new moose_lib_1.IngestPipeline("Bar", {
                     if (_exceptionable === void 0) { _exceptionable = true; }
                     return ("object" === typeof input && null !== input || _report(true, {
                         path: _path + "",
-                        expected: "Bar",
+                        expected: "__type",
                         value: input
                     })) && _vo0(input, _path + "", true) || _report(true, {
                         path: _path + "",
-                        expected: "Bar",
+                        expected: "__type",
                         value: input
                     });
                 })(input, "$input", true);
@@ -304,12 +513,12 @@ exports.BarPipeline = new moose_lib_1.IngestPipeline("Bar", {
                 return ("object" === typeof input && null !== input || __typia_transform__assertGuard._assertGuard(true, {
                     method: "____moose____typia.createAssert",
                     path: _path + "",
-                    expected: "Bar",
+                    expected: "__type",
                     value: input
                 }, _errorFactory)) && _ao0(input, _path + "", true) || __typia_transform__assertGuard._assertGuard(true, {
                     method: "____moose____typia.createAssert",
                     path: _path + "",
-                    expected: "Bar",
+                    expected: "__type",
                     value: input
                 }, _errorFactory);
             })(input, "$input", true);
