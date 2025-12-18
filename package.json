@@ -1,5 +1,5 @@
 {
-  "name": "moose-node-2",
+  "name": "moose-node-3",
   "version": "0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,6 +23,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@514labs/kafka-javascript",
       "@confluentinc/kafka-javascript"
     ]
   }
