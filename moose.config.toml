@@ -55,3 +55,7 @@ streaming_engine = true
 workflows = true
 data_model_v2 = true
 apis = true
+
+
+[docker_config]
+custom_dockerfile = true
